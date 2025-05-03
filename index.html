@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" tabindex="0">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,13 +10,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="./src/main.js" defer></script>
 </head>
-<body class="min-h-screen p-4 flex flex-col gap-4">
-  <head>
-   <section class="nav-cont flex relative flex-col items-start" tabindex="0">
+<body class="max-h-screen p-4 flex flex-col gap-4 h-100vh dark:bg-black">
+  <header class="dark:text-white">
+   <section class="nav-cont h-full flex relative flex-col items-start" tabindex="0">
     <button id="expand-btn" class="p-2">
-      ▾ Medium
+      ▾ With friend
     </button>
-    <section class="expanded absolute top-full z-20 flex flex-col items-start bg-[#eee] rounded-[10px] hidden">
+    <section class="expanded absolute top-full z-20 flex flex-col items-start bg-[#eee] rounded-[10px] hidden dark:bg-[#333]">
       <button id="easy" class="p-2">Easy</button>
       <button id="medium" class="p-2">Medium</button>
       <button id="impossible" class="p-2">Impossible</button>
@@ -27,35 +27,59 @@
    <section id="turn" class="flex justify-between gap-4">
      
      
-     <div class="flex justify-between items-center w-[100%] p-4 border rounded-[10px]">
+     <div class="flex justify-between items-center w-[100%] p-4 border rounded-[10px] turn-x">
        <div class="bg-[url('../TTTI/xb.png')] dark:bg-[url('../TTTI/xw.png')] bg-cover w-4 h-4 my-0 mx-2"></div>
-       <p>-</p>
+       <p id="turn-x-p">-</p>
      </div>
      
-     <div class="flex justify-between items-center w-[100%] p-4 border rounded-[10px]">
+     <div class="flex justify-between items-center w-[100%] p-4 border rounded-[10px] turn-o">
        <div class="bg-[url('../TTTI/ob.png')] dark:bg-[url('../TTTI/ow.png')] bg-cover w-4 h-4 my-0 mx-2"></div>
-       <p>-</p>
+       <p id="turn-o-p">-</p>
      </div>
    </section>
-   <p class="text-center text-[rgba(20,20,20,0.8)]">start game or select player</p>
-  </head>
+   <p id="comment" class="text-center text-[0.8rem] text-[rgba(20,20,20,0.7)] dark:text-[rgba(240,240,240,0.8)] mt-4">Start game or select player</p>
+  </header>
   
-  <main>
-   <section class="aspect-square relative flex items-center justify-center">
-    <section class="w-[90%] h-[90%] grid grid-cols-3 grid-rows-3">
-      <button id="g1" class="border-[rgba(0,0,0,0.3)] border-r-[5px] border-b-[5px]"></button>
-      <button id="g2" class="border-[rgba(0,0,0,0.3)] border-b-[5px]"></button>
-      <button id="g3" class="border-[rgba(0,0,0,0.3)] border-l-[5px] border-b-[5px]"></button>
-      <button id="g4" class="border-[rgba(0,0,0,0.3)] border-r-[5px]"></button>
-      <button id="g5" class=""></button>
-      <button id="g6" class="border-[rgba(0,0,0,0.3)] border-l-[5px]"></button>
-      <button id="g7" class="border-[rgba(0,0,0,0.3)] border-t-[5px] border-r-[5px]"></button>
-      <button id="g8" class="border-[rgba(0,0,0,0.3)] border-t-[5px]"></button>
-      <button id="g9" class="border-[rgba(0,0,0,0.3)] border-l-[5px] border-t-[5px]"></button>
+  <main class="max-h-[70vh]">
+   <section class="game-cont aspect-square relative flex items-center justify-center mx-auto max-h-[70vh]">
+    <section class="game-btns w-[90%] h-[90%] grid grid-cols-3 grid-rows-3 aspect-square">
+  
+  
+      <button id="g1" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-r-[5px] border-b-[5px]">
+      </button>
+  
+  
+      <button id="g2" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-b-[5px]"></button>
+   
+   
+      <button id="g3" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-l-[5px] border-b-[5px]"></button>
+   
+   
+      <button id="g4" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-r-[5px]"></button>
+  
+  
+      <button id="g5"></button>
+ 
+ 
+      <button id="g6" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-l-[5px]"></button>
+ 
+ 
+      <button id="g7" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-t-[5px] border-r-[5px]"></button>
+ 
+ 
+      <button id="g8" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-t-[5px]"></button>
+
+
+      <button id="g9" class="border-[rgba(0,0,0,0.3)] dark:border-[rgba(255,255,255,0.3)] border-l-[5px] border-t-[5px]"></button>
+ 
+ 
     </section>
    </section>
    
-   <button class="w-full mx-auto">restart game</button>
+   <button id="reset" class="w-full mx-auto dark:text-white hidden">restart game</button>
   </main>
 </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>eruda.init();</script>
 </html>
