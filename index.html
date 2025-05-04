@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" tabindex="0">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,28 +14,27 @@
   <header class="dark:text-white">
    <section class="nav-cont h-full flex relative flex-col items-start" tabindex="0">
     <button id="expand-btn" class="p-2">
-      ▾ With friend
+      ▾ <span id="modeShower">Play against friend</span>
     </button>
+    
     <section class="expanded absolute top-full z-20 flex flex-col items-start bg-[#eee] rounded-[10px] hidden dark:bg-[#333]">
-      <button id="easy" class="p-2">Easy</button>
-      <button id="medium" class="p-2">Medium</button>
-      <button id="impossible" class="p-2">Impossible</button>
-      <button id="with-friend" class="p-2">Play with a friend</button>
+      <button id="easy" class="p-2 expandedbtn">Easy</button>
+      <button id="medium" class="p-2 expandedbtn">Medium</button>
+      <button id="impossible" class="p-2 expandedbtn">Impossible</button>
+      <button id="with-friend" class="p-2 expandedbtn">Play against a friend</button>
     </section>
    </section>
    
    <section id="turn" class="flex justify-between gap-4">
-     
-     
-     <div class="flex justify-between items-center w-[100%] p-4 border rounded-[10px] turn-x">
+     <button id="turn-x" class="flex justify-between items-center w-[100%] p-4 border rounded-[10px] turn-x">
        <div class="bg-[url('../TTTI/xb.png')] dark:bg-[url('../TTTI/xw.png')] bg-cover w-4 h-4 my-0 mx-2"></div>
        <p id="turn-x-p">-</p>
-     </div>
+     </button>
      
-     <div class="flex justify-between items-center w-[100%] p-4 border rounded-[10px] turn-o">
+     <button id="turn-o" class="flex justify-between items-center w-[100%] p-4 border rounded-[10px] turn-o">
        <div class="bg-[url('../TTTI/ob.png')] dark:bg-[url('../TTTI/ow.png')] bg-cover w-4 h-4 my-0 mx-2"></div>
        <p id="turn-o-p">-</p>
-     </div>
+     </button>
    </section>
    <p id="comment" class="text-center text-[0.8rem] text-[rgba(20,20,20,0.7)] dark:text-[rgba(240,240,240,0.8)] mt-4">Start game or select player</p>
   </header>
@@ -74,9 +73,12 @@
  
  
     </section>
+    
+         <button id="wonmsg" class="w-[90%] h-[90%] flex flex-col items-center justify-center gap-4 text-black dark:text-white hidden">hello</button>
    </section>
    
-   <button id="reset" class="w-full mx-auto dark:text-white hidden">restart game</button>
+   
+   <button id="reset" class="w-full mx-auto my-1 text-[#5ab] underline hidden hover:text-[#389]">Restart game</button>
   </main>
 </body>
 
