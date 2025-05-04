@@ -1,15 +1,128 @@
 function sleep(ms){
   return new Promise(resolve => setTimeout(resolve,ms))
 }
+function finish(arr,oneLeft){
+    for(let [k,v] of oneLeft.entries()){
+      if(v.every(el=>arr.includes(el)) && arr.every(el=>v.includes(el))){
+        switch(k){
+          case 0:
+            return 3;
+          case 1:
+            return 1;
+         case 2:
+            return 2;  
+         case 3:
+            return 6;   
+         case 4:
+            return 4;     
+         case 5:
+            return 5;     
+         case 6:
+            return 9;     
+         case 7:
+            return 7;    
+         case 8:
+            return 8;
+        case 9:
+            return 7;
+        case 10:
+            return 1;     
+        case 11:
+            return 4;      
+        case 12:
+            return 8;     
+        case 13:
+            return 2;     
+        case 14:
+            return 5;      
+        case 15:
+            return 9;    
+       case 16:
+            return 3;    
+       case 17:
+            return 6;   
+       case 18:
+            return 9;    
+       case 19:
+            return 1;      
+       case 20:
+            return 5;     
+       case 21:
+            return 7;      
+       case 22:
+            return 3;       
+       case 23:
+            return 5;       
+        }
+      }
+    }
+}
+function check(arr,oneLeft){
+    for(let i of oneLeft){
+      if(i.every(i=>arr.includes(i)))return i;
+    }
+    return false;
+}
+function fork(arr,held){
+  let forkChances = [{main:[5,1],free:[3,7,9],move:3},{main:[5,1],free:[3,2,7],move:3},{main:[5,1],free:[3,2,9],move:3},{main:[5,1],free:[7,3,9],move:7},{main:[5,1],free:[7,4,3],move:7},{main:[5,1],free:[7,4,9],move:7},{main:[5,3],free:[1,7,9],move:1},{main:[5,3],free:[1,2,7],move:1},{main:[5,3],free:[1,2,9],move:1},{main:[5,3],free:[9,1,7],move:9},{main:[5,3],free:[9,6,1],move:9},{main:[5,3],free:[9,6,7],move:9},{main:[5,7],free:[1,3,9],move:1},{main:[5,7],free:[1,4,3],move:1},{main:[5,7],free:[1,4,9],move:1},{main:[5,7],free:[9,1,3],move:9},{main:[5,7],free:[9,8,1],move:9},{main:[5,7],free:[9,8,3],move:9},{main:[5,9],free:[7,1,3],move:7},{main:[5,9],free:[7,8,1],move:7},{main:[5,9],free:[7,8,3],move:7},{main:[5,9],free:[3,1,7],move:3},{main:[5,9],free:[3,6,1],move:3},{main:[5,9],free:[3,6,7],move:3},{main:[1,9],free:[2,3,6],move:3},{main:[1,9],free:[4,7,8],move:7},{main:[3,7],free:[2,1,4],move:1},{main:[3,7],free:[6,9,8],move:9}];
+  
+  for(let obj of forkChances){
+    if(obj.main.every(i=>arr.includes(i)) && !obj.free.some(i=>held.includes(i)))return obj.move;
+  }
+  return false;
+}
+
 
 async function easyBot(bot, opp) {
   let left = [1,2,3,4,5,6,7,8,9].filter(i=>!bot.includes(i) && !opp.includes(i));
   await sleep(500);
   return left[Math.floor(Math.random() * (left.length))]
 }
+function easyNow(bot, opp){
+  let left = [1,2,3,4,5,6,7,8,9].filter(i=>!bot.includes(i) && !opp.includes(i));
+  return left[Math.floor(Math.random() * (left.length))]
+}
 
 async function impBot(bot, opp){
+  await sleep(500);
+  const held = [...bot,...opp];
+  const oneLeft = [[1,2],[2,3],[1,3],[4,5],[5,6],[4,6],[7,8],[8,9],[7,9],[1,4],[4,7],[1,7],[2,5],[5,8],[2,8],[3,6],[6,9],[3,9],[1,5],[5,9],[1,9],[3,5],[5,7],[3,7]];
+  let movenum = bot.length + opp.length;
+  let corner = [1,3,7,9][Math.floor(Math.random()*4)];
   
+  
+  if(movenum===0)return corner;
+  if(movenum===1){
+    if(opp[0]===5)return corner;
+    else{return 5;}
+  }
+  if(movenum===2){
+    if(opp[0]===5){
+      switch (bot[0]){
+        case 1:
+          return 9;
+        case 3:
+          return 7;
+        case 7:
+          return 3;
+        case 9:
+          return 1;
+      }
+    }else{
+      return 5;
+    }
+  }
+  if(movenum===3){
+    if(check(opp,oneLeft))return finish(check(opp,oneLeft),oneLeft)
+  }
+  let checkedb = check(bot,oneLeft);
+  let checkedo = check(opp,oneLeft);
+  if(checkedb && !held.includes(finish(checkedb,oneLeft)))return finish(checkedb,oneLeft);
+  if(checkedo && !held.includes(finish(checkedo,oneLeft)))return finish(checkedo,oneLeft);
+  
+  if(fork(bot,held))return fork(bot,held);
+  if(fork(opp,held))return fork(opp,held);
+  return easyNow(bot,opp);
 }
 
 
@@ -86,7 +199,6 @@ let choicebtns = [...document.querySelectorAll(".expandedbtn")];
 
 function makeMove(numb){
   let thebtn=btns.filter(i=>i.id=== `g${numb}`)[0];
-  
   if(isWon(heldx) || isWon(heldo) || isDraw())return;
   if(heldx.includes(numb) || heldo.includes(numb))return;
   thebtn.innerHTML = `<img src=${turn==="x" ? imgx : imgo } alt=${turn} id=game-img${numb} class="game-img" oncontextmenu="return false;">`
@@ -155,9 +267,8 @@ function restartGame(){
   wonmsg.classList.add("hidden");
   gamegrand.classList.remove("hidden");
   requestAnimationFrame(()=>gamegrand.style.opacity="1");
-  console.log(userTurn, gameMode)
+  
   if(!(gameMode==="with-friend") && userTurn==="o"){
-    console.log("ffled");
     (async ()=>{
       let move= gameMode==="easy" ? await easyBot([],[]) : gameMode==="medium" ? await midBot([],[]) : await impBot([],[]);
       makeMove(move);
@@ -243,6 +354,7 @@ choicebtns.forEach(b=>{
     choices.classList.add("hidden");
     turnShowerXP.innerHTML="-";
     turnShowerOP.innerHTML="-";
+    restartGame();
     if(gameMode === "with-friend"){
        modeShower.innerHTML="Play against friend"
     }else{
