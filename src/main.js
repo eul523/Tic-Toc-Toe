@@ -1,61 +1,9 @@
 function sleep(ms){
   return new Promise(resolve => setTimeout(resolve,ms))
 }
-function finish(arr,oneLeft){
-    for(let [k,v] of oneLeft.entries()){
-      if(v.every(el=>arr.includes(el)) && arr.every(el=>v.includes(el))){
-        switch(k){
-          case 0:
-            return 3;
-          case 1:
-            return 1;
-         case 2:
-            return 2;  
-         case 3:
-            return 6;   
-         case 4:
-            return 4;     
-         case 5:
-            return 5;     
-         case 6:
-            return 9;     
-         case 7:
-            return 7;    
-         case 8:
-            return 8;
-        case 9:
-            return 7;
-        case 10:
-            return 1;     
-        case 11:
-            return 4;      
-        case 12:
-            return 8;     
-        case 13:
-            return 2;     
-        case 14:
-            return 5;      
-        case 15:
-            return 9;    
-       case 16:
-            return 3;    
-       case 17:
-            return 6;   
-       case 18:
-            return 9;    
-       case 19:
-            return 1;      
-       case 20:
-            return 5;     
-       case 21:
-            return 7;      
-       case 22:
-            return 3;       
-       case 23:
-            return 5;       
-        }
-      }
-    }
+function finish(arr,oneLeft,fn){
+    let fnI = oneLeft.findIndex(d=>d.every(i=>arr.includes(i)) && arr.every(i=>d.includes(i)));
+    return fnI>=0 ? fn[fnI] : null
 }
 function check(arr,oneLeft){
     for(let i of oneLeft){
@@ -83,10 +31,12 @@ function easyNow(bot, opp){
   return left[Math.floor(Math.random() * (left.length))]
 }
 
-async function impBot(bot, opp){
+
+async function bot(bot, opp, cond){
   await sleep(500);
   const held = [...bot,...opp];
   const oneLeft = [[1,2],[2,3],[1,3],[4,5],[5,6],[4,6],[7,8],[8,9],[7,9],[1,4],[4,7],[1,7],[2,5],[5,8],[2,8],[3,6],[6,9],[3,9],[1,5],[5,9],[1,9],[3,5],[5,7],[3,7]];
+  let finishInd = [3,1,2,6,4,5,9,7,8,7,1,4,8,2,5,9,3,6,9,1,5,7,3,5];
   let movenum = bot.length + opp.length;
   let corner = [1,3,7,9][Math.floor(Math.random()*4)];
   
@@ -112,16 +62,18 @@ async function impBot(bot, opp){
       return 5;
     }
   }
-  if(movenum===3){
-    if(check(opp,oneLeft))return finish(check(opp,oneLeft),oneLeft)
-  }
+  if(movenum===3 && ((opp.includes(1) && opp.includes(9)) || (opp.includes(3) && opp.includes(7))))return 6;
   let checkedb = check(bot,oneLeft);
   let checkedo = check(opp,oneLeft);
-  if(checkedb && !held.includes(finish(checkedb,oneLeft)))return finish(checkedb,oneLeft);
-  if(checkedo && !held.includes(finish(checkedo,oneLeft)))return finish(checkedo,oneLeft);
+  if(checkedb && !held.includes(finish(checkedb,oneLeft,finishInd)))return finish(checkedb,oneLeft,finishInd);
+  if(checkedo && !held.includes(finish(checkedo,oneLeft,finishInd)))return finish(checkedo,oneLeft,finishInd);
   
-  if(fork(bot,held))return fork(bot,held);
-  if(fork(opp,held))return fork(opp,held);
+  let ran = Math.floor(Math.random()*2);
+  if(cond && ran && fork(bot,held))return fork(bot,held);
+  if(cond && ran && fork(opp,held))return fork(opp,held);
+  
+  if(!cond && fork(bot,held))return fork(bot,held);
+  if(!cond && fork(opp,held))return fork(opp,held);
   return easyNow(bot,opp);
 }
 
@@ -177,7 +129,7 @@ document.addEventListener("click",e=>{
 let turn = "x";
 let heldx = [];
 let heldo = [];
-let gameMode = "easy";
+let gameMode = "medium";
 let userTurn = "x";
 
 
@@ -270,7 +222,7 @@ function restartGame(){
   
   if(!(gameMode==="with-friend") && userTurn==="o"){
     (async ()=>{
-      let move= gameMode==="easy" ? await easyBot([],[]) : gameMode==="medium" ? await midBot([],[]) : await impBot([],[]);
+      let move= gameMode==="easy" ? await easyBot([],[]) : gameMode==="medium" ? await bot([],[]) : await bot([],[]);
       makeMove(move);
     })();
   }
@@ -302,7 +254,7 @@ btns.forEach(i=> i.onclick=b=>{
         (async ()=>{
           let opp = userTurn==="x" ? heldx : heldo;
           let botm = userTurn==="o" ? heldx : heldo;
-         let move= gameMode==="easy" ? await easyBot(botm,opp) : gameMode==="medium" ? await midBot(botm,opp) : await impBot(botm,opp);
+         let move= gameMode==="easy" ? await easyBot(botm,opp) : gameMode==="medium" ? await bot(botm,opp,true) : await bot(botm,opp);
          makeMove(move);
        })();
       }
@@ -325,7 +277,7 @@ btns.forEach(i=> i.onclick=b=>{
     if(heldx.length===0 && heldo.length===0){
       userTurn="o";
       (async ()=>{
-      let move= gameMode==="easy" ? await easyBot([],[]) : gameMode==="medium" ? await midBot([],[]) : await impBot([],[]);
+      let move= gameMode==="easy" ? await easyBot([],[]) : gameMode==="medium" ? await bot([],[]) : await bot([],[]);
       makeMove(move);
     })();
     }
