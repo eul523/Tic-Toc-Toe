@@ -13,9 +13,12 @@
 <body class="max-h-screen p-4 flex flex-col gap-4 h-100vh dark:bg-black">
   <header class="dark:text-white">
    <section class="nav-cont h-full flex relative flex-col items-start" tabindex="0">
-    <button id="expand-btn" class="p-2">
-      ▾ <span id="modeShower"></span>
-    </button>
+     <section class="flex flex-row items-center justify-between w-full">
+        <button id="expand-btn" class="p-2">▾ <span id="modeShower"></span>
+        </button>
+        <button id="sound" class="h-4 w-4"></button>
+     </section>
+
     
     <section class="expanded absolute top-full z-20 flex flex-col items-start bg-[#eee] rounded-[10px] hidden dark:bg-[#333]">
       <button id="easy" class="p-2 expandedbtn">Easy</button>
@@ -81,7 +84,4 @@
    <button id="reset" class="w-full mx-auto my-1 text-[#5ab] underline hidden hover:text-[#389]">Restart game</button>
   </main>
 </body>
-
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
 </html>

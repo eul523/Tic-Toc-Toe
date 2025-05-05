@@ -21,25 +21,24 @@ function fork(arr,held){
 }
 
 
-async function easyBot(bot, opp) {
+async function easyBot(bot, opp, sl) {
   let left = [1,2,3,4,5,6,7,8,9].filter(i=>!bot.includes(i) && !opp.includes(i));
-  await sleep(500);
+  if(!sl)await sleep(800);
   return left[Math.floor(Math.random() * (left.length))]
 }
-function easyNow(bot, opp){
-  let left = [1,2,3,4,5,6,7,8,9].filter(i=>!bot.includes(i) && !opp.includes(i));
-  return left[Math.floor(Math.random() * (left.length))]
-}
-
 
 async function bot(bot, opp, cond){
-  await sleep(500);
+  await sleep(800);
   const held = [...bot,...opp];
   const oneLeft = [[1,2],[2,3],[1,3],[4,5],[5,6],[4,6],[7,8],[8,9],[7,9],[1,4],[4,7],[1,7],[2,5],[5,8],[2,8],[3,6],[6,9],[3,9],[1,5],[5,9],[1,9],[3,5],[5,7],[3,7]];
   let finishInd = [3,1,2,6,4,5,9,7,8,7,1,4,8,2,5,9,3,6,9,1,5,7,3,5];
   let movenum = bot.length + opp.length;
   let corner = [1,3,7,9][Math.floor(Math.random()*4)];
   
+  let checkedb = check(bot,oneLeft);
+  let checkedo = check(opp,oneLeft);
+  if(checkedb && !held.includes(finish(checkedb,oneLeft,finishInd)))return finish(checkedb,oneLeft,finishInd);
+  if(checkedo && !held.includes(finish(checkedo,oneLeft,finishInd)))return finish(checkedo,oneLeft,finishInd);
   
   if(movenum===0)return corner;
   if(movenum===1){
@@ -63,10 +62,6 @@ async function bot(bot, opp, cond){
     }
   }
   if(movenum===3 && ((opp.includes(1) && opp.includes(9)) || (opp.includes(3) && opp.includes(7))))return 6;
-  let checkedb = check(bot,oneLeft);
-  let checkedo = check(opp,oneLeft);
-  if(checkedb && !held.includes(finish(checkedb,oneLeft,finishInd)))return finish(checkedb,oneLeft,finishInd);
-  if(checkedo && !held.includes(finish(checkedo,oneLeft,finishInd)))return finish(checkedo,oneLeft,finishInd);
   
   let ran = Math.floor(Math.random()*2);
   if(cond && ran && fork(bot,held))return fork(bot,held);
@@ -74,18 +69,22 @@ async function bot(bot, opp, cond){
   
   if(!cond && fork(bot,held))return fork(bot,held);
   if(!cond && fork(opp,held))return fork(opp,held);
-  return easyNow(bot,opp);
+  return easyBot(bot,opp,true);
 }
 
 
-let imgx, imgo ;
+let imgx, imgo, imgs, imgns;
 const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 if (isDarkMode) {
   imgx= "../TTTI/xw.png";
   imgo= "../TTTI/ow.png";
+  imgs= "../sW.png";
+  imgns= "../noSW.png";
 }else{
   imgx= "../TTTI/xb.png";
-    imgo= "../TTTI/ob.png";
+  imgo= "../TTTI/ob.png";
+  imgs= "../sB.png";
+  imgns= "../noSB.png";
 }
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
   const newColorScheme = e.matches ? "dark" : "light";
@@ -131,6 +130,7 @@ let heldx = [];
 let heldo = [];
 let gameMode = "medium";
 let userTurn = "x";
+let playAud = true;
 
 
 let gamegrand = document.querySelector(".game-btns");
@@ -147,13 +147,18 @@ let turnShowerX = document.getElementById("turn-x");
 let turnShowerXP = document.getElementById("turn-x-p");
 let turnShowerOP = document.getElementById("turn-o-p");
 let choicebtns = [...document.querySelectorAll(".expandedbtn")];
+let soundbtn = document.getElementById("sound");
 
 
 function makeMove(numb){
   let thebtn=btns.filter(i=>i.id=== `g${numb}`)[0];
   if(isWon(heldx) || isWon(heldo) || isDraw())return;
   if(heldx.includes(numb) || heldo.includes(numb))return;
-  thebtn.innerHTML = `<img src=${turn==="x" ? imgx : imgo } alt=${turn} id=game-img${numb} class="game-img" oncontextmenu="return false;">`
+  thebtn.innerHTML = `<img src=${turn==="x" ? imgx : imgo } alt=${turn} id=game-img${numb} class="game-img" oncontextmenu="return false;">`;
+  if(playAud){
+    const moveAud = new Audio("../move.mp3");
+    moveAud.play();
+  }
   if(turn === "x"){
       heldx.push(numb)
     }else{
@@ -173,7 +178,6 @@ function makeMove(numb){
   if(isWon(heldo) || isWon(heldx) || isDraw()){
     let decos = isWon(heldx) || isWon(heldo);
     if(decos){
-      
       document.getElementById("comment").innerHTML= "Game over";
     [...document.querySelectorAll(".game-img")].filter(i=>decos.includes(Number(i.id.slice(-1,)))).forEach(i=> {setTimeout(()=>{i.classList.remove("won");void i.offsetWidth;i.classList.add("won")},400)});
     if(isWon(heldo)){
@@ -183,6 +187,10 @@ function makeMove(numb){
     }
     setTimeout(()=>{
        gamegrand.style.opacity="0";
+       if(playAud){
+        let wonAud = gameMode==="with-friend" ? new Audio("../win.mp3") : turn===userTurn ? new Audio("../lose.wav") : new Audio("win.mp3");
+        wonAud.play();
+       }
        setTimeout(()=>{
          gamegrand.classList.add("hidden");
          wonmsg.classList.remove("hidden");
@@ -194,6 +202,10 @@ function makeMove(numb){
     if(isDraw()){
       gamegrand.style.opacity="0";
       setTimeout(()=>{
+        if(playAud){
+        const drawAud = new Audio("move.mp3");
+        drawAud.play();
+      }
          gamegrand.classList.add("hidden");
          wonmsg.classList.remove("hidden");
          wonmsg.innerHTML=`<section class="flex justify-center gap-6 h-1/3 w-[100%]"><img src=${imgx} class="h-full w-auto m-0" oncontextmenu="return false;"><img src=${imgo} class="h-full m-0 w-auto" oncontextmenu="return false;"></section><h2 class="text-[2.5rem]">Draw!</h2>`
@@ -206,6 +218,11 @@ function makeMove(numb){
   }
 }
 
+soundbtn.innerHTML=playAud ? `<img src=${imgs} oncontextmenu="return false;">` : `<img src=${imgns} class="h-full w-auto m-0" oncontextmenu="return false;">`
+soundbtn.onclick=()=>{
+  playAud = !playAud;
+  soundbtn.innerHTML=playAud ? `<img src=${imgs} oncontextmenu="return false;">` : `<img src=${imgns} class="h-full w-auto m-0" oncontextmenu="return false;">`
+}
 
 function restartGame(){
   reset.classList.add("hidden") 
@@ -215,7 +232,7 @@ function restartGame(){
   btns.forEach(i=>i.innerHTML="");
   turno.classList.remove("turn");
   turnx.classList.add("turn");
-  document.getElementById("comment").innerHTML= "Start game or select player";
+  document.getElementById("comment").innerHTML= gameMode==="with-friend" ? `${turn.toUpperCase()} turn` : "Start game or select player";
   wonmsg.classList.add("hidden");
   gamegrand.classList.remove("hidden");
   requestAnimationFrame(()=>gamegrand.style.opacity="1");
